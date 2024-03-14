@@ -213,7 +213,9 @@ if (heroku.dockerBuildArgs) {
 
     if (heroku.preDeployCommand) {
       console.log("Running pre deploy command");
-      execSync(heroku.preDeployCommand);
+      const output = execSync(heroku.preDeployCommand).toString();
+      console.log(output);
+      console.log("Finished running pre deploy command");
     }
 
     createProcfile(heroku);
