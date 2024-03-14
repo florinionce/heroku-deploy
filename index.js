@@ -151,6 +151,7 @@ let heroku = {
   region: core.getInput("region"),
   stack: core.getInput("stack"),
   team: core.getInput("team"),
+  preDeployCommand: core.getInput("pre_deploy_command"),
 };
 
 // Formatting
@@ -210,6 +211,11 @@ if (heroku.dockerBuildArgs) {
     execSync(createCatFile(heroku));
     console.log("Created and wrote to ~/.netrc");
 
+    if (heroku.preDeployCommand) {
+      console.log("Running pre deploy command");
+      execSync(heroku.preDeployCommand);
+    }
+
     createProcfile(heroku);
 
     if (heroku.usedocker) {
@@ -224,8 +230,8 @@ if (heroku.dockerBuildArgs) {
       deploy({ ...heroku, dontuseforce: true });
     } catch (err) {
       console.error(`
-            Unable to push branch because the branch is behind the deployed branch. Using --force to deploy branch. 
-            (If you want to avoid this, set dontuseforce to 1 in with: of .github/workflows/action.yml. 
+            Unable to push branch because the branch is behind the deployed branch. Using --force to deploy branch.
+            (If you want to avoid this, set dontuseforce to 1 in with: of .github/workflows/action.yml.
             Specifically, the error was: ${err}
         `);
 
